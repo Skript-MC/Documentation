@@ -1,33 +1,39 @@
+/**
+ * Parser Skript
+ * Permet d'appliquer des classes de coloration syntaxique au code
+ * Ecris par Uneo7
+**/
 let code = $('pre').html();
-let match = '';
 
-code = code.replace(
-	/"/gim, 
-	'&quot;'
-);
+// Chaines entre guillemets
+	// Remplacement de tous les guillements par lur représentation HTML (evite les conflits plus tard)
+	code = code.replace(
+		/"/gim, 
+		'&quot;'
+	);
+	// Force les chaines entre guillement à rester grises
+	code = code.replace(/&quot;(.*)&quot;/gi, match => {
+		const split = match.split(/&quot;/gi);
+		split.shift();
+		split.pop();
 
-code = code.replace(/&quot;(.*)&quot;/gi, match => {
-	const split = match.split(/&quot;/gi);
-	split.shift();
-	split.pop();
+		if (split.length === 1) {
+			return `<span class="gray">&quot;${split[0].trim()}&quot;</span>`;
+		}
+		
+		match = '';
 
-	if (split.length === 1) {
-		return `<span class="gray">&quot;${split[0].trim()}&quot;</span>`;
-	}
-	
-	match = '';
+		for (let i in split) {
+			if (i % 2 === 0) {
+				match += `<span class="gray">&quot;${split[i].trim()}&quot;</span>`;
+				continue;
+			}
 
-	for (let i in split) {
-		if (i % 2 === 0) {
-			match += `<span class="gray">&quot;${split[i].trim()}&quot;</span>`;
-			continue;
+			match += ' ' + split[i].trim() + ' ';
 		}
 
-		match += ' ' + split[i].trim() + ' ';
-	}
-
-	return match;
-});
+		return match;
+	});
 
 // Fonctions
 	// Retour
